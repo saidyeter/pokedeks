@@ -4,8 +4,6 @@
 	let offset = 0;
 	let count;
 	async function fetchPokemons() {
-		console.log("fetchPokemons",offset,limit,count)
-
 		var response = await fetch(`https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`);
 		var data = await response.json();
 		offset = p(limit) + p(offset)
