@@ -149,7 +149,7 @@
 			<p>Capture Rate:{data.capture_rate}</p>
 			<p>Color:{data.color.name}</p>
 			<p>Growth Rate:{data.growth_rate.name}</p>
-			<p>Habitat:{data.habitat.name}</p>
+			<!-- <p>Habitat:{data.habitat.name}</p> -->
 			<p>Generation:{data.generation.name}</p>
 			<p>Is Baby:{data.is_baby}</p>
 			<p>Is Legendary:{data.is_legendary}</p>
