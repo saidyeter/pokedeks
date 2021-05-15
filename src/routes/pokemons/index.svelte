@@ -1,4 +1,5 @@
 <script>
+
 	import PokeItem from '../../lib/pokemon-item.svelte';
 	let limit = 15;
 	let offset = 0;
@@ -63,32 +64,10 @@
 	</div>
 </div>
 <div class="ul">
-	<div class="li" on:click={() => getCatalog('')}>*</div>
-	<div class="li" on:click={() => getCatalog('a')}>a</div>
-	<div class="li" on:click={() => getCatalog('b')}>b</div>
-	<div class="li" on:click={() => getCatalog('c')}>c</div>
-	<div class="li" on:click={() => getCatalog('d')}>d</div>
-	<div class="li" on:click={() => getCatalog('e')}>e</div>
-	<div class="li" on:click={() => getCatalog('f')}>f</div>
-	<div class="li" on:click={() => getCatalog('g')}>g</div>
-	<div class="li" on:click={() => getCatalog('h')}>h</div>
-	<div class="li" on:click={() => getCatalog('i')}>i</div>
-	<div class="li" on:click={() => getCatalog('j')}>j</div>
-	<div class="li" on:click={() => getCatalog('k')}>k</div>
-	<div class="li" on:click={() => getCatalog('l')}>l</div>
-	<div class="li" on:click={() => getCatalog('m')}>m</div>
-	<div class="li" on:click={() => getCatalog('n')}>n</div>
-	<div class="li" on:click={() => getCatalog('o')}>o</div>
-	<div class="li" on:click={() => getCatalog('p')}>p</div>
-	<div class="li" on:click={() => getCatalog('q')}>q</div>
-	<div class="li" on:click={() => getCatalog('r')}>r</div>
-	<div class="li" on:click={() => getCatalog('s')}>s</div>
-	<div class="li" on:click={() => getCatalog('t')}>t</div>
-	<div class="li" on:click={() => getCatalog('u')}>u</div>
-	<div class="li" on:click={() => getCatalog('w')}>w</div>
-	<div class="li" on:click={() => getCatalog('x')}>x</div>
-	<div class="li" on:click={() => getCatalog('y')}>y</div>
-	<div class="li" on:click={() => getCatalog('z')}>z</div>
+	<div class="li global-card" on:click={() => getCatalog('')}>All</div>
+	{#each 'abcdefghijklmnopqrstuvwxyz'.split('') as letter}
+		<div class="li global-card" on:click={() => getCatalog(letter)}>{letter}</div>
+	{/each}
 </div>
 <br />
 <br />
@@ -121,7 +100,6 @@
 		flex-wrap: wrap;
 	}
 	.li {
-		background-color: var(--primary-color);
 		opacity: 0.8;
 		font-size: 1.2em;
 		cursor: pointer;
@@ -131,9 +109,9 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		color: #fff;
 		box-shadow: 0.2em 0.2em 0.4em rgba(0, 0, 0, 0.8);
 		transition: 0.2s;
+		border-radius: .4em;
 	}
 	.li:hover {
 		box-shadow: 0.2em 0.2em 0.6em rgba(0, 0, 0, 0.6);
@@ -164,5 +142,4 @@
 	button[disabled] {
 		opacity: 0.2;
 	}
-
 </style>

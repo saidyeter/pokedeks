@@ -12,11 +12,14 @@
 <script>
 	export let pokemonId;
 
+	import PokeItem from '../../lib/pokemon-item.svelte';
+
 	function imgs(pokemonDetail) {
 		let imgList = Object.getOwnPropertyNames(pokemonDetail.sprites)
 			.filter(
 				(x) => pokemonDetail.sprites[x] != null && typeof pokemonDetail.sprites[x] == 'string'
 			)
+			.reverse()
 			.map((x) => {
 				return {
 					alt: x,
@@ -80,119 +83,249 @@
 		return res;
 	}
 
-
+	function getImgSrc(id) {
+		var imgSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+		return imgSrc;
+	}
+	var speciesPromise = getPokemonSpecies(pokemonId);
 </script>
 
 {#await fetcher(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`)}
 	<p>loading</p>
-{:then pokemonDetail} 
-	
-<div class="container">
-	<div class="col-1">
-		<img
-			src="https://pokeres.bastionbot.org/images/pokemon/{pokemonDetail.id}.png"
-			alt={pokemonDetail.name}
-		/>
-		<h1>{pokemonDetail.name}</h1>
+{:then pokemonDetail}
+	<div class="container">
+		<div class="left">
+			<div class="banner">
+				<img
+					src="https://pokeres.bastionbot.org/images/pokemon/{pokemonDetail.id}.png"
+					alt={pokemonDetail.name}
+				/>
+			</div>
+			<div class="forms">
+				{#await speciesPromise}
+					<p>loading</p>
+				{:then data}
+					{#await fetcher(data.evolution_chain.url)}
+						<p>loading</p>
+					{:then data}
+						{#each parseEvolves(data) as poki}
+							<PokeItem selected={poki.id == pokemonId} id={poki.id} imgSrc={getImgSrc(poki.id)} name={poki.name} />
+						{/each}
+					{/await}
+				{/await}
+			</div>
+			<div class="stats">
+				<h2>stats</h2>
+				<div class="stats-container">
+					{#each stats(pokemonDetail) as stat}
+						<div class="stats-item global-card">
+							<div class="stats-name">{stat.name}</div>
 
-		<ul>
-			<li>Name:{pokemonDetail.name}</li>
-			<li>Poke Id :{pokemonDetail.id}</li>
-			<li>Height:{pokemonDetail.height}</li>
-			<li>Weight:{pokemonDetail.weight}</li>
-			<li>Base Experience:{pokemonDetail.base_experience}</li>
-		</ul>
-	</div>
-	<div class="col-2">
-		<h2>stats</h2>
-		<ul>
-			{#each stats(pokemonDetail) as stat}
-				<li>{stat.name} : {stat.val}</li>
-			{/each}
-		</ul>
-		<h2>abilities</h2>
-		<ul>
-			{#each pokemonDetail.abilities as data}
-				<li><a href={data.ability.url}>{data.ability.name}</a></li>
-			{/each}
-		</ul>
-		<h2>moves</h2>
-		<ul>
-			<!-- buraya buton ekleyip dahasını getirmek gerekli -->
-			{#each pokemonDetail.moves.slice(0, 10) as data}
-				<li><a href={data.move.url}>{data.move.name}</a></li>
-			{/each}
-		</ul>
-	</div>
-	<div class="col-3">
-		{#each imgs(pokemonDetail) as imgItem}
-			<img src={imgItem.src} alt={imgItem.alt} />
-		{/each}
-	</div>
-</div>
-<div class="species">
-	{#await getPokemonSpecies(pokemonId)}
-		<p>loading</p>
-	{:then data}
-		<div class="info">
-			<p>Base Happiness :{data.base_happiness}</p>
-			<p>Capture Rate:{data.capture_rate}</p>
-			<p>Color:{data.color.name}</p>
-			<p>Growth Rate:{data.growth_rate.name}</p>
-			<!-- <p>Habitat:{data.habitat.name}</p> -->
-			<p>Generation:{data.generation.name}</p>
-			<p>Is Baby:{data.is_baby}</p>
-			<p>Is Legendary:{data.is_legendary}</p>
-			<p>Is Mythical:{data.is_mythical}</p>
-			<p>Shape:{data.shape.name}</p>
-			<ul>
-				{#each data.egg_groups as egg}
-					<li>{egg.name}</li>
-				{/each}
-			</ul>
+							<div class="stats-val">{stat.val}</div>
+						</div>
+					{/each}
+				</div>
+			</div>
 		</div>
-		<div class="forms">
-			{#await fetcher(data.evolution_chain.url)}
-				<p>loading</p>
-			{:then data}
-				{#each parseEvolves(data) as poki}
-					<div class="pokidiv">
-						<a href="/pokemons/{poki.id}">
-							<img src={poki.imgSrc} loading="lazy" alt={poki.name} />
-							<br />
-							{poki.name}
-						</a>
+		<div class="main">
+			<div class="header">
+				<h1>{pokemonDetail.name}</h1>
+				<div class="small-imgs">
+					{#each imgs(pokemonDetail) as imgItem}
+						<img src={imgItem.src} alt={imgItem.alt} />
+					{/each}
+				</div>
+				<div class="info">
+					<div class="info-item global-card">
+						<div class="info-item-key">Poke Id</div>
+						<div class="info-item-value">{pokemonDetail.id}</div>
 					</div>
-				{/each}
-			{/await}
-		</div>
-	{/await}
-</div>
+					<div class="info-item global-card">
+						<div class="info-item-key">Height</div>
+						<div class="info-item-value">{pokemonDetail.height}</div>
+					</div>
+					<div class="info-item global-card">
+						<div class="info-item-key">Weight</div>
+						<div class="info-item-value">{pokemonDetail.weight}</div>
+					</div>
+					<div class="info-item global-card">
+						<div class="info-item-key">Base Experience</div>
+						<div class="info-item-value">{pokemonDetail.base_experience}</div>
+					</div>
+				</div>
+			</div>
+			<div class="additional">
+				{#await speciesPromise}
+					<p>loading</p>
+				{:then data}
+					<div class="info">
+						<div class="info-item global-card">
+							<div class="info-item-key">Base Happiness</div>
+							<div class="info-item-value">{data.base_happiness}</div>
+						</div>
+						<div class="info-item global-card">
+							<div class="info-item-key">Capture Rate</div>
+							<div class="info-item-value">{data.capture_rate}</div>
+						</div>
+						<div class="info-item global-card">
+							<div class="info-item-key">Color</div>
+							<div class="info-item-value">{data.color.name}</div>
+						</div>
+						<div class="info-item global-card">
+							<div class="info-item-key">Growth Rate</div>
+							<div class="info-item-value">{data.growth_rate.name}</div>
+						</div>
+						<div class="info-item global-card">
+							<div class="info-item-key">Generation</div>
+							<div class="info-item-value">{data.generation.name}</div>
+						</div>
+						<div class="info-item global-card">
+							<div class="info-item-key">Is Baby</div>
+							<div class="info-item-value">{data.is_baby}</div>
+						</div>
+						<div class="info-item global-card">
+							<div class="info-item-key">Is Legendary</div>
+							<div class="info-item-value">{data.is_legendary}</div>
+						</div>
+						<div class="info-item global-card">
+							<div class="info-item-key">Is Mythical</div>
+							<div class="info-item-value">{data.is_mythical}</div>
+						</div>
+						<div class="info-item global-card">
+							<div class="info-item-key">Shape</div>
+							<div class="info-item-value">{data.shape.name}</div>
+						</div>
+						<div class="info-item global-card">
+							<div class="info-item-key">Egg Groups</div>
+							<div class="info-item-value">
+								{#each data.egg_groups as egg}
+									{egg.name}
+								{/each}
+							</div>
+						</div>
+					</div>
+				{/await}
+			</div>
+			<div class="types-abilities">
+				<div class="types">
+					<h3>types</h3>
 
+					<div class="flag-container">
+						{#each pokemonDetail.types as data}
+							<a href={data.type.url}>
+								<div class="flag global-card hovarable">
+									{data.type.name}
+								</div>
+							</a>
+						{/each}
+					</div>
+				</div>
+
+				<div class="abilities">
+					<h3>abilities</h3>
+
+					<div class="flag-container">
+						{#each pokemonDetail.abilities as data}
+							<a href={data.ability.url}>
+								<div class="flag global-card hovarable">
+									{data.ability.name}
+								</div>
+							</a>
+						{/each}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="moves">
+		<h3>moves</h3>
+		<div class="flag-container">
+			{#each pokemonDetail.moves as data}
+				<a href={data.move.url}>
+					<div class="flag global-card hovarable">
+						{data.move.name}
+					</div>
+				</a>
+			{/each}
+		</div>
+	</div>
 {/await}
+
+<!-- 
+<div class="info">
+	<div class="info-item global-card">
+		<div class="info-item-key">Base Happiness</div>
+		<div class="info-item-value">{data.base_happiness}</div>
+	</div> -->
 <style>
 	.container,
-	.species {
-		width: auto;
-		display: flex;
-		flex: 1;
-	}
-	.container,
-	.species div {
-		border: 1px solid black;
-		width: auto;
-		min-width: 30%;
-	}
-	.col-1 img {
-		width: 15rem;
-	}
-
-	.pokidiv {
-		width: 120px;
-		height: 120px;
-	}
 	.forms {
 		display: flex;
+	}
+	.left {
+		margin-right: 1em;
+	}
+	.header {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.banner img {
+		width: 25rem;
+	}
+
+	.stats-container {
+		display: flex;
 		flex-wrap: wrap;
+	}
+	.stats-item {
+		margin: 0.5em;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		width: 4em;
+		height: 4em;
+		border-radius: 50%;
+	}
+	.stats-name,
+	.info-item-key {
+		text-transform: uppercase;
+		text-align: center;
+		font-size: 0.65em;
+	}
+	.stats-val,
+	.info-item-value {
+		font-weight: 600;
+	}
+	.flag-container {
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+	}
+	.flag {
+		display: block;
+		margin: 0.4em;
+		padding: 0.2em;
+		border-radius: 0.5em;
+	}
+	.info {
+		display: flex;
+		flex-wrap: wrap;
+	}
+	.info-item {
+		border-radius: 0.5em;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin: 0.4em;
+		padding: 0.2em;
+	}
+	.types-abilities {
+		display: flex;
+		flex-wrap: wrap;
+	}
+	.types {
+		margin-right: 2em;
 	}
 </style>
