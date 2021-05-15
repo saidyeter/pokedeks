@@ -1,6 +1,7 @@
 export function get(offset, limit, letter) {
     const lettered = catalog(letter)
-	const result = lettered.slice(offset, offset + limit);
+	const sliced = lettered.slice(offset, offset + limit);
+	const result = sliced.sort((a, b) => (a.name > b.name) ? 1 : -1)
 	return {
 		list:result,
 		count:lettered.length
