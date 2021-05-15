@@ -1,7 +1,10 @@
 export function get(offset, limit, letter) {
     const lettered = catalog(letter)
 	const result = lettered.slice(offset, offset + limit);
-	return result;
+	return {
+		list:result,
+		count:lettered.length
+	};
 }
 export function search(name,limit) {
     const result = pokemonList.filter(x => x.name.includes(name)).slice(0,limit)

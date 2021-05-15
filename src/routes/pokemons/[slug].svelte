@@ -12,16 +12,6 @@
 <script>
 	export let pokemonId;
 
-	// let pokemonDetail;
-	// let imgList;
-	// let statList;
-	// async function prepare(id) {
-	// 	console.log("id",id)
-	// 	pokemonDetail = await fetcher(`https://pokeapi.co/api/v2/pokemon/${id}`);
-	// 	imgs();
-	// 	stats();
-	// }
-
 	function imgs(pokemonDetail) {
 		let imgList = Object.getOwnPropertyNames(pokemonDetail.sprites)
 			.filter(
