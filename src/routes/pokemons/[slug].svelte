@@ -251,12 +251,6 @@
 	</div>
 {/await}
 
-<!-- 
-<div class="info">
-	<div class="info-item global-card">
-		<div class="info-item-key">Base Happiness</div>
-		<div class="info-item-value">{data.base_happiness}</div>
-	</div> -->
 <style>
 	.container,
 	.forms {
