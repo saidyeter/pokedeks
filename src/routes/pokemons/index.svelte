@@ -8,6 +8,9 @@
 	let totalCount = 0;
 
 	let pokemonList = [];
+
+	let searchKey='';
+	let searched=false;
 	import { get, search } from './pokemon-source';
 
 	function fetchPokemons() {
@@ -43,11 +46,18 @@
 		letter = letterValue;
 		fetchPokemons();
 	}
+
+
+
 </script>
+
+<svelte:head>
+	<title>Pokemons</title>
+</svelte:head>
 
 <div class="header">
 	<div class="actions">
-		<button on:click={getPrevious} disabled={offset <= 0}> previous</button>
+		<button on:click={getPrevious} disabled={offset <= 0 ||searched}>Previous</button>
 		<label
 			>Limit :
 			<select bind:value={limit}>
@@ -55,9 +65,14 @@
 				<option>20</option>
 				<option>50</option>
 			</select>
-			<button on:click={fetchPokemons}> Apply</button>
+			<button on:click={fetchPokemons} disabled={searched}> Apply</button>
 		</label>
-		<button on:click={getNext} disabled={offset + limit >= totalCount}> next</button>
+		<button on:click={getNext} disabled={offset + limit >= totalCount || searched}>Next</button>
+	</div>
+	<div class="search">
+		<input type="text" bind:value={searchKey} placeholder="Search">
+		<button on:click={document.location='/search-pokemon/'+searchKey}>Search</button>
+
 	</div>
 	<div class="info">
 		<span>Listing from {offset + 1} to {offset + count} pokemons in {totalCount}</span>
