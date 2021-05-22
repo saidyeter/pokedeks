@@ -7,8 +7,8 @@ export function get(offset, limit, letter) {
 		count:lettered.length
 	};
 }
-export function search(name,limit) {
-    const result = pokemonList.filter(x => x.name.includes(name)).slice(0,limit)
+export function search(name) {
+    const result = pokemonList.filter(x => x.name.includes(name))
     return result
 }
 function catalog(letter) {

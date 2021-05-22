@@ -5,7 +5,6 @@
 <svelte:head>
 	<title>Home</title>
 </svelte:head>
-<slot />
 
 <section>
 	<div>
