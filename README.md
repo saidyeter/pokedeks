@@ -2,6 +2,7 @@
 
 A svelte project for pokemon info.
 I aimed to learn svelte.
+Demo: https://pokedeks-kordiseps.netlify.app/pokemons 
 
 ## Installation
 
